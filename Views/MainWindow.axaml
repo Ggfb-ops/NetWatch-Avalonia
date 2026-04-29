@@ -1,0 +1,364 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:NetWatch.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+        x:Class="NetWatch.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="NetWatch"
+        Width="1200" Height="800"
+        MinWidth="900" MinHeight="600"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource AppBg}"
+        Foreground="#fafafa">
+
+  <Grid ColumnDefinitions="280,*" Margin="0">
+
+    <!-- ===== SIDEBAR ===== -->
+    <Border Grid.Column="0" Background="{DynamicResource SidebarBg}" 
+            BorderBrush="{DynamicResource BorderDefault}" BorderThickness="0,0,1,0">
+      <ScrollViewer>
+        <StackPanel Spacing="0" Margin="0">
+
+          <!-- Logo -->
+          <Border Padding="24,20,24,16">
+            <StackPanel Spacing="4">
+              <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Left">
+                <Border Width="38" Height="38" CornerRadius="10" Background="{DynamicResource PurpleAccent}">
+                  <TextBlock Text="N" FontSize="19" FontWeight="Black" Foreground="#ffffff"
+                             HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <TextBlock Text="NetWatch" FontSize="21" FontWeight="Black"
+                           Foreground="#f8fafc" VerticalAlignment="Center"/>
+              </StackPanel>
+              <TextBlock Text="{Binding SubtitleDisplay}" FontSize="11"
+                         Foreground="#52525b" Margin="50,-2,0,0"/>
+            </StackPanel>
+          </Border>
+
+          <Border Height="1" Background="{DynamicResource BorderDefault}" Margin="16,0"/>
+
+          <!-- Файл -->
+          <Border Padding="16,12">
+            <StackPanel Spacing="8">
+              <Button Command="{Binding ToggleLangCommand}"
+                      HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                      Background="transparent" Foreground="#a1a1aa" Padding="10,6" CornerRadius="8">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                  <TextBlock Text="&#x1F310;" FontSize="15"/>
+                  <TextBlock Text="{Binding LangDisplay}" FontSize="13"/>
+                </StackPanel>
+              </Button>
+
+              <Button Click="OnBrowseClick" HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Center"
+                      Background="{DynamicResource PurpleAccent}" Foreground="#ffffff" 
+                      Padding="10,8" CornerRadius="8">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <TextBlock Text="&#x1F4C2;" FontSize="15"/>
+                  <TextBlock Text="{Binding BrowseText}" FontSize="13" FontWeight="SemiBold"/>
+                </StackPanel>
+              </Button>
+
+              <Border DragDrop.AllowDrop="True"
+                      DragDrop.DragOver="OnDragOver" DragDrop.Drop="OnDrop"
+                      PointerPressed="OnDropZoneClick"
+                      MinHeight="90" CornerRadius="10" Padding="16"
+                      Background="{DynamicResource CardBg}" BorderBrush="{DynamicResource InputBorder}" BorderThickness="1">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="4">
+                  <TextBlock Text="&#x1F4E5;" FontSize="22" HorizontalAlignment="Center" Opacity="0.4"/>
+                  <TextBlock Text="{Binding DropZoneText}" FontSize="11" Foreground="#52525b"
+                             HorizontalAlignment="Center" TextWrapping="Wrap"/>
+                  <TextBlock Text="{Binding DropZoneHint}" FontSize="10" Foreground="#3f3f46"
+                             HorizontalAlignment="Center"/>
+                </StackPanel>
+              </Border>
+            </StackPanel>
+          </Border>
+
+          <!-- Статистика (видна после анализа) -->
+          <Panel IsVisible="{Binding HasResult}">
+            <StackPanel Spacing="0">
+
+              <Border Height="1" Background="{DynamicResource BorderDefault}" Margin="16,4"/>
+              <TextBlock x:Name="SummaryLabel" Text="{Binding SummaryText}" FontSize="11" Foreground="#52525b"
+                         FontWeight="SemiBold" Margin="24,12,24,8" LetterSpacing="1"/>
+
+              <!-- Критические -->
+              <Border x:Name="StatCritical" Background="#0f0f14" BorderBrush="#7c3aed40" BorderThickness="1"
+                       CornerRadius="8" Padding="10,8" Margin="16,0,16,4"
+                       PointerPressed="OnStatClick" Tag="critical" Cursor="Hand">
+                <Grid ColumnDefinitions="4,Auto,*">
+                  <Border x:Name="StripCritical" Grid.Column="0" CornerRadius="2" Width="4" Background="{DynamicResource CriticalFg}" Margin="0,2,0,2"/>
+                  <TextBlock x:Name="StatCriticalVal" Grid.Column="1" Text="{Binding CriticalCount}" FontSize="20" FontWeight="Bold"
+                             Foreground="{DynamicResource CriticalFg}" Classes="mono" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                  <TextBlock x:Name="StatCriticalLbl" Grid.Column="2" FontSize="11" Foreground="#71717a"
+                             VerticalAlignment="Center" Margin="8,0,0,0"/>
+                </Grid>
+              </Border>
+
+              <!-- Ошибки -->
+              <Border x:Name="StatError" Background="#0f0f14" BorderBrush="#7c3aed40" BorderThickness="1"
+                       CornerRadius="8" Padding="10,8" Margin="16,0,16,4"
+                       PointerPressed="OnStatClick" Tag="error" Cursor="Hand">
+                <Grid ColumnDefinitions="4,Auto,*">
+                  <Border x:Name="StripError" Grid.Column="0" CornerRadius="2" Width="4" Background="{DynamicResource ErrorFg}" Margin="0,2,0,2"/>
+                  <TextBlock x:Name="StatErrorVal" Grid.Column="1" Text="{Binding ErrorCount}" FontSize="20" FontWeight="Bold"
+                             Foreground="{DynamicResource ErrorFg}" Classes="mono" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                  <TextBlock x:Name="StatErrorLbl" Grid.Column="2" FontSize="11" Foreground="#71717a"
+                             VerticalAlignment="Center" Margin="8,0,0,0"/>
+                </Grid>
+              </Border>
+
+              <!-- Предупреждения -->
+              <Border x:Name="StatWarning" Background="#0f0f14" BorderBrush="#7c3aed40" BorderThickness="1"
+                       CornerRadius="8" Padding="10,8" Margin="16,0,16,4"
+                       PointerPressed="OnStatClick" Tag="warning" Cursor="Hand">
+                <Grid ColumnDefinitions="4,Auto,*">
+                  <Border x:Name="StripWarning" Grid.Column="0" CornerRadius="2" Width="4" Background="{DynamicResource WarningFg}" Margin="0,2,0,2"/>
+                  <TextBlock x:Name="StatWarningVal" Grid.Column="1" Text="{Binding WarningCount}" FontSize="20" FontWeight="Bold"
+                             Foreground="{DynamicResource WarningFg}" Classes="mono" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                  <TextBlock x:Name="StatWarningLbl" Grid.Column="2" FontSize="11" Foreground="#71717a"
+                             VerticalAlignment="Center" Margin="8,0,0,0"/>
+                </Grid>
+              </Border>
+
+              <!-- Информация -->
+              <Border x:Name="StatInfo" Background="#0f0f14" BorderBrush="#7c3aed40" BorderThickness="1"
+                       CornerRadius="8" Padding="10,8" Margin="16,0,16,4"
+                       PointerPressed="OnStatClick" Tag="info" Cursor="Hand">
+                <Grid ColumnDefinitions="4,Auto,*">
+                  <Border x:Name="StripInfo" Grid.Column="0" CornerRadius="2" Width="4" Background="{DynamicResource InfoFg}" Margin="0,2,0,2"/>
+                  <TextBlock x:Name="StatInfoVal" Grid.Column="1" Text="{Binding InfoCount}" FontSize="20" FontWeight="Bold"
+                             Foreground="{DynamicResource InfoFg}" Classes="mono" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                  <TextBlock x:Name="StatInfoLbl" Grid.Column="2" FontSize="11" Foreground="#71717a"
+                             VerticalAlignment="Center" Margin="8,0,0,0"/>
+                </Grid>
+              </Border>
+
+              <!-- Всего -->
+              <Border x:Name="StatTotal" Background="#0f0f14" BorderBrush="#7c3aed40" BorderThickness="1"
+                       CornerRadius="8" Padding="10,8" Margin="16,0,16,4"
+                       PointerPressed="OnStatClick" Tag="all" Cursor="Hand">
+                <Grid ColumnDefinitions="4,Auto,*">
+                  <Border x:Name="StripTotal" Grid.Column="0" CornerRadius="2" Width="4" Background="#71717a" Margin="0,2,0,2"/>
+                  <TextBlock x:Name="StatTotalVal" Grid.Column="1" Text="{Binding TotalCount}" FontSize="20" FontWeight="Bold"
+                             Foreground="#e4e4e7" Classes="mono" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                  <TextBlock x:Name="StatTotalLbl" Grid.Column="2" FontSize="11" Foreground="#71717a"
+                             VerticalAlignment="Center" Margin="8,0,0,0"/>
+                </Grid>
+              </Border>
+
+              <Border Height="1" Background="{DynamicResource BorderDefault}" Margin="16,8"/>
+
+              <StackPanel Spacing="6" Margin="16,0,16,8">
+                <Button Click="OnExportClick" HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        Background="#18181b" Foreground="#a1a1aa" Padding="10,8" CornerRadius="8"
+                        BorderBrush="{DynamicResource InputBorder}" BorderThickness="1">
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="&#x1F4BE;" FontSize="14"/>
+                    <TextBlock Text="{Binding ExportText}" FontSize="12"/>
+                  </StackPanel>
+                </Button>
+                <Button Command="{Binding ClearCommand}" HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        Padding="10,7" CornerRadius="8"
+                        Background="#1c0c0c" Foreground="#ef4444"
+                        BorderBrush="#ef444440" BorderThickness="1">
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock Text="&#x2716;" FontSize="12"/>
+                    <TextBlock Text="{Binding ClearText}" FontSize="12"/>
+                  </StackPanel>
+                </Button>
+              </StackPanel>
+            </StackPanel>
+          </Panel>
+
+          <!-- Версия -->
+          <Border Height="1" Background="{DynamicResource BorderDefault}" Margin="16,4"/>
+          <TextBlock Text="v1.0.0" FontSize="10" Foreground="#27272a"
+                     HorizontalAlignment="Center" Margin="0,10,0,10"/>
+        </StackPanel>
+      </ScrollViewer>
+    </Border>
+
+    <!-- ===== ОСНОВНАЯ ОБЛАСТЬ ===== -->
+    <Grid Grid.Column="1" RowDefinitions="Auto,Auto,*" Margin="0">
+
+      <!-- Поиск -->
+      <Border Grid.Row="0" Background="{DynamicResource SidebarBg}" 
+              BorderBrush="{DynamicResource BorderDefault}" BorderThickness="0,0,0,1"
+              Padding="24,10">
+        <DockPanel>
+          <TextBlock x:Name="LinesShownLabel" DockPanel.Dock="Right" FontSize="12" Foreground="#52525b"
+                     VerticalAlignment="Center" Margin="12,0,0,0"/>
+          <TextBox Text="{Binding SearchText, Mode=TwoWay}"
+                   x:Name="SearchBox"
+                   PlaceholderText="{Binding SearchPlaceholder}"
+                   Padding="14,9" FontSize="13"
+                   Background="{DynamicResource InputBg}" Foreground="#e4e4e7"
+                   BorderBrush="{DynamicResource InputBorder}" CornerRadius="8"/>
+        </DockPanel>
+      </Border>
+
+      <!-- Проблемные места -->
+      <Expander Grid.Row="1" IsVisible="{Binding HasIssues}" MaxHeight="280"
+                Margin="24,10,24,0" IsExpanded="False" x:Name="IssuesExpander"
+                Background="{DynamicResource CardBg}" CornerRadius="10"
+                BorderBrush="{DynamicResource InputBorder}" BorderThickness="1">
+        <Expander.Styles>
+          <Style Selector="Expander > ToggleButton">
+            <Setter Property="Foreground" Value="#e4e4e7"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="14,8"/>
+          </Style>
+        </Expander.Styles>
+        <ScrollViewer MaxHeight="220">
+          <StackPanel Spacing="4" Margin="4">
+            <TextBlock Text="{Binding IssuesText}" FontSize="13" Foreground="#e4e4e7" FontWeight="SemiBold"/>
+            <ItemsControl ItemsSource="{Binding Issues}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:IssueItem">
+                  <Border Background="#0c0c10" BorderBrush="#27272a" BorderThickness="1"
+                          CornerRadius="8" Padding="12,10" Margin="0,0,0,4"
+                          PointerPressed="OnIssueClick" Tag="{Binding Lines}" Cursor="Hand">
+                    <Grid ColumnDefinitions="6,*">
+                      <Border Grid.Column="0" CornerRadius="3" Width="4" Margin="0,2,0,2"
+                              Background="{Binding LevelClass, Converter={x:Static vm:MainWindowViewModel.LevelToBrushConverter}}"/>
+                      <StackPanel Grid.Column="1" Spacing="4" Margin="10,0,0,0">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                          <TextBlock Text="{Binding LevelName}" FontSize="10" FontWeight="Bold"
+                                     Foreground="{Binding LevelClass, Converter={x:Static vm:MainWindowViewModel.LevelToBrushConverter}}"/>
+                          <TextBlock FontSize="10" Foreground="#52525b">
+                            <Run Text="{Binding LineLabel}"/>
+                            <Run Text=" "/>
+                            <Run Text="{Binding LineList}"/>
+                          </TextBlock>
+                        </StackPanel>
+                        <TextBlock Text="{Binding Message}" FontSize="13" TextWrapping="Wrap"
+                                   Foreground="#d4d4d8"/>
+                        <Border IsVisible="{Binding HasExplanation}"
+                                Background="#8b5cf60a" BorderBrush="#8b5cf625" BorderThickness="1"
+                                CornerRadius="6" Padding="8,5">
+                          <TextBlock Text="{Binding Explanation}" FontSize="12" Foreground="#a78bfa"
+                                     TextWrapping="Wrap"/>
+                        </Border>
+                        <StackPanel IsVisible="{Binding HasFixes}" Spacing="2" Margin="0,2,0,0">
+                          <TextBlock Text="{Binding HowToFixText}" FontSize="11" FontWeight="Bold"
+                                     Foreground="#a78bfa"/>
+                          <ItemsControl ItemsSource="{Binding Fixes}">
+                            <ItemsControl.ItemTemplate>
+                              <DataTemplate x:DataType="x:String">
+                                <StackPanel Orientation="Horizontal" Spacing="4" Margin="8,1,0,0">
+                                  <TextBlock Text="→" FontSize="11" Foreground="#a78bfa" FontWeight="Bold"/>
+                                  <TextBlock Text="{Binding}" FontSize="12" Foreground="#a1a1aa" TextWrapping="Wrap"/>
+                                </StackPanel>
+                              </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                          </ItemsControl>
+                        </StackPanel>
+                      </StackPanel>
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </ScrollViewer>
+      </Expander>
+
+      <!-- Логи -->
+      <Border Grid.Row="2" Background="#0a0a0e" Margin="24,10,24,16" CornerRadius="12"
+              BorderBrush="{DynamicResource BorderDefault}" BorderThickness="1" IsVisible="{Binding HasResult}"
+              MinHeight="200">
+        <Grid RowDefinitions="Auto,*,Auto">
+          <!-- Заголовок лога -->
+          <Border Grid.Row="0" Background="#0f0f14" CornerRadius="12,12,0,0"
+                  Padding="18,8" BorderBrush="{DynamicResource BorderDefault}" BorderThickness="0,0,0,1">
+            <TextBlock Text="{Binding LogText}" FontSize="12" Foreground="#52525b"
+                       FontWeight="SemiBold"/>
+          </Border>
+          <!-- Строки лога (ListBox для виртуализации) -->
+          <ListBox Grid.Row="1" x:Name="LogItems"
+                   ItemsSource="{Binding LogLines}"
+                   SelectedItem="{Binding SelectedLogLine, Mode=TwoWay}"
+                   SelectionMode="Single"
+                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                   Background="Transparent" BorderThickness="0" Padding="0">
+            <ListBox.Styles>
+              <Style Selector="ListBoxItem">
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="Margin" Value="0"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="CornerRadius" Value="0"/>
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+              </Style>
+              <Style Selector="ListBoxItem:selected">
+                <Setter Property="Background" Value="#7c3aed15"/>
+              </Style>
+              <Style Selector="ListBoxItem:pointerover">
+                <Setter Property="Background" Value="#ffffff06"/>
+              </Style>
+            </ListBox.Styles>
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:LogLineItem">
+                <Grid ColumnDefinitions="8,48,*" Margin="6,3,16,3">
+                  <Border Grid.Column="0" CornerRadius="2" Width="4" Height="4"
+                          Background="{Binding LevelClass, Converter={x:Static vm:MainWindowViewModel.LevelToBrushConverter}}"
+                          VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                  <TextBlock Grid.Column="1" Text="{Binding LineNum}" FontSize="11"
+                             Foreground="#3f3f46" TextAlignment="Right" Classes="mono"
+                             Padding="0,0,12,0"/>
+                  <TextBlock Grid.Column="2" Text="{Binding Content}" FontSize="12"
+                             Foreground="#a1a1aa" TextWrapping="Wrap" Classes="mono"/>
+                </Grid>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+          <!-- Панель деталей -->
+          <Border Grid.Row="2" IsVisible="{Binding SelectedLogLine, Converter={x:Static vm:MainWindowViewModel.NotNullConverter}}"
+                  Background="#0f0f14" BorderBrush="{DynamicResource BorderDefault}" BorderThickness="0,1,0,0"
+                  CornerRadius="0,0,12,12" Padding="18,14" MaxHeight="180">
+            <ScrollViewer>
+              <StackPanel Spacing="6" DataContext="{Binding SelectedLogLine}">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <TextBlock Text="{Binding Level, StringFormat='{}[{0}]'}" FontSize="11" FontWeight="Bold"
+                             Foreground="{Binding LevelClass, Converter={x:Static vm:MainWindowViewModel.LevelToBrushConverter}}"/>
+                  <TextBlock x:Name="DetailLineLabel" FontSize="11" Foreground="#52525b"/>
+                  <TextBlock Text="{Binding LineNum}" FontSize="11" Foreground="#52525b"/>
+                </StackPanel>
+                <TextBlock Text="{Binding Content}" FontSize="13" Foreground="#d4d4d8" TextWrapping="Wrap"
+                           Classes="mono"/>
+                <Border IsVisible="{Binding HasExplanation}"
+                        Background="#8b5cf60a" BorderBrush="#8b5cf625" BorderThickness="1"
+                        CornerRadius="6" Padding="8,5">
+                  <TextBlock Text="{Binding Explanation}" FontSize="12" Foreground="#a78bfa"
+                             TextWrapping="Wrap"/>
+                </Border>
+                <StackPanel IsVisible="{Binding HasFixes}" Spacing="2">
+                  <TextBlock x:Name="DetailHowToFixLabel" FontSize="11" FontWeight="Bold"
+                             Foreground="#a78bfa"/>
+                  <ItemsControl ItemsSource="{Binding Fixes}">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate x:DataType="x:String">
+                        <StackPanel Orientation="Horizontal" Spacing="4" Margin="8,1,0,0">
+                          <TextBlock Text="→" FontSize="11" Foreground="#a78bfa" FontWeight="Bold"/>
+                          <TextBlock Text="{Binding}" FontSize="12" Foreground="#a1a1aa" TextWrapping="Wrap"/>
+                        </StackPanel>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </StackPanel>
+              </StackPanel>
+            </ScrollViewer>
+          </Border>
+        </Grid>
+      </Border>
+
+    </Grid>
+  </Grid>
+</Window>

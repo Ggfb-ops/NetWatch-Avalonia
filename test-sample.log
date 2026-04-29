@@ -1,0 +1,17 @@
+2026-04-29 08:01:12 INFO: Application started on port 8080
+2026-04-29 08:01:15 INFO: Connected to database PostgreSQL
+2026-04-29 08:02:30 WARNING: Deprecated API /v1/users — use /v2/users
+2026-04-29 08:03:01 WARNING: High CPU usage on worker-3 (92%)
+2026-04-29 08:04:15 ERROR: Connection timeout — database not responding after 30s
+2026-04-29 08:04:16 ERROR: ECONNREFUSED — Redis server 10.0.1.50:6379
+2026-04-29 08:04:17    at RedisClient.Connect(String host, Int32 port) in /src/redis.cs:line 42
+2026-04-29 08:04:18    at RedisClient.Connect(String host, Int32 port) in /src/redis.cs:line 58
+2026-04-29 08:05:01 ERROR: HTTP 502 — Bad Gateway from upstream api-gateway
+2026-04-29 08:05:30 WARNING: Disk space low on /var/log — 2.1 GB remaining
+2026-04-29 08:06:00 CRITICAL: Out of memory — process killed by kernel OOM
+2026-04-29 08:06:01 FATAL: Application cannot continue — all workers down
+2026-04-29 08:06:05 INFO: Failover initiated — switching to backup node
+2026-04-29 08:06:10 INFO: Backup node connected successfully
+2026-04-29 08:06:15 WARNING: Retry attempt 3/5 — email service unavailable
+2026-04-29 08:06:20 ERROR: HTTP 403 — Access forbidden for user admin@corp.com
+2026-04-29 08:07:00 INFO: Health check passed on backup node

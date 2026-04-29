@@ -1,0 +1,34 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="NetWatch.App"
+             xmlns:local="using:NetWatch"
+             RequestedThemeVariant="Default">
+
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+
+    <Application.Resources>
+        <!-- Основные цвета приложения -->
+        <SolidColorBrush x:Key="AppBg">#09090b</SolidColorBrush>
+        <SolidColorBrush x:Key="SidebarBg">#0c0c10</SolidColorBrush>
+        <SolidColorBrush x:Key="CardBg">#0f0f14</SolidColorBrush>
+        <SolidColorBrush x:Key="InputBorder">#27272a</SolidColorBrush>
+        <SolidColorBrush x:Key="BorderDefault">#1c1c24</SolidColorBrush>
+        <SolidColorBrush x:Key="InputBg">#18181b</SolidColorBrush>
+
+        <!-- Акценты -->
+        <SolidColorBrush x:Key="PurpleAccent">#7c3aed</SolidColorBrush>
+        <SolidColorBrush x:Key="PurpleFg">#a78bfa</SolidColorBrush>
+
+        <!-- Уровни логов -->
+        <SolidColorBrush x:Key="CriticalFg">#ef4444</SolidColorBrush>
+        <SolidColorBrush x:Key="ErrorFg">#f97316</SolidColorBrush>
+        <SolidColorBrush x:Key="WarningFg">#eab308</SolidColorBrush>
+        <SolidColorBrush x:Key="InfoFg">#3b82f6</SolidColorBrush>
+    </Application.Resources>
+
+    <Application.Styles>
+        <FluentTheme />
+    </Application.Styles>
+</Application>
