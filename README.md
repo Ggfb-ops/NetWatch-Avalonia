@@ -4,7 +4,8 @@
 
 Drag & drop a `.log` / `.txt` / `.json` file or paste from clipboard (Ctrl+V) — NetWatch will detect error levels, group issues, explain causes, and suggest fixes.
 
-<!-- Screenshots will be added here -->
+![NetWatch — empty state](Assets/screenshot-empty.png)
+![NetWatch — loaded log](Assets/screenshot-loaded.png)
 
 ## Features
 
