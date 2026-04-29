@@ -16,19 +16,5 @@ publish/
 Thumbs.db
 desktop.ini
 
-## Build
-*.dll
-*.pdb
-*.exe
-*.cache
-
-## Tools (not part of project)
-Tools/IconGen/bin/
-Tools/IconGen/obj/
-
-## Test artifacts
-NetWatch.Tests/bin/
-NetWatch.Tests/obj/
-
-## AGENTS.md (internal AI config)
+## AGENTS.md (internal)
 AGENTS.md

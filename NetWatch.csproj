@@ -23,8 +23,6 @@
   <ItemGroup>
     <Folder Include="Models\" />
     <AvaloniaResource Include="Assets\**" />
-    <Compile Remove="Tools\**" />
-    <None Remove="Tools\**" />
     <Compile Remove="NetWatch.Tests\**" />
     <None Remove="NetWatch.Tests\**" />
   </ItemGroup>

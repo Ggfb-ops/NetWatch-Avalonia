@@ -1,50 +1,59 @@
 # NetWatch
 
-**Log analyzer with auto-detection of errors and fix suggestions**
+**Drop a log file — get instant diagnosis.**
 
-Drag & drop a `.log` / `.txt` / `.json` file or paste from clipboard (Ctrl+V) — NetWatch will detect error levels, group issues, explain causes, and suggest fixes.
+NetWatch is a desktop log analyzer that detects errors, groups them into issues, explains what went wrong, and tells you how to fix it.
 
 ![NetWatch — empty state](Assets/screenshot-empty.png)
-![NetWatch — loaded log](Assets/screenshot-loaded.png)
+![NetWatch — analysis result](Assets/screenshot-loaded.png)
+
+## What it does
+
+You're staring at a 10,000-line log file at 2 AM. Something broke. What now?
+
+NetWatch turns that wall of text into structured insight:
+
+- **Auto-detects error levels** — Critical, Error, Warning, Info — across 80+ patterns in English and Russian
+- **Groups related errors** — consecutive failures + stack traces become a single actionable issue
+- **Explains every issue** — "ECONNREFUSED" becomes "Network error: remote host refused connection"
+- **Suggests fixes** — each explanation comes with concrete steps to resolve the problem
+- **Exports HTML reports** — styled, self-contained, ready to share with the team
+
+## Supported log formats
+
+| Format | Detection |
+|--------|-----------|
+| Plain text (app logs) | Keyword patterns |
+| Syslog | PRI/timestamp parsing |
+| Nginx access log | Combined format |
+| Windows Event XML | Structured event extraction |
+
+## How to use
+
+1. **Download** the latest release from [Releases](https://github.com/Ggfb-ops/NetWatch-Avalonia/releases)
+2. **Unzip** and run `NetWatch.exe`
+3. **Drag & drop** a `.log`, `.txt`, or `.json` file — or **Ctrl+V** to paste from clipboard
+4. Browse issues, search, filter, and export reports
+
+No .NET runtime needed — it's a self-contained single executable.
 
 ## Features
 
-- **Auto-detection** — Critical / Error / Warning / Info levels via 80+ regex patterns (EN + RU keywords)
-- **Log formats** — plain text, syslog, nginx access log, Windows Event XML
-- **Issue grouping** — consecutive errors + stack traces grouped into actionable issues
-- **Explanations & fixes** — every detected issue gets a human-readable explanation and fix suggestions
-- **Search & filter** — full-text search + level filters
-- **HTML report export** — styled dark-theme report with statistics, issues, and full log
-- **Drag & drop** — drop file onto the drop zone or use file picker
-- **Clipboard paste** — Ctrl+V to paste log text directly
-- **Bilingual UI** — Russian / English toggle
-- **Cross-platform** — Windows, macOS, Linux
+- Full-text search with level filtering
+- RU / EN interface toggle
+- Dark theme UI
+- Cross-platform (Windows, macOS, Linux)
 
-## Tech Stack
-
-- Avalonia UI 12
-- .NET 9
-- CommunityToolkit.Mvvm 8.4.1
-
-## Build
+## Build from source
 
 ```bash
 dotnet build NetWatch.csproj -c Release
-```
-
-## Run
-
-```bash
-dotnet run --project NetWatch.csproj -c Release
-```
-
-## Tests
-
-38 xUnit tests covering level detection, explanations, issue grouping, syslog/nginx/WinEvent preprocessing, stack traces, and edge cases.
-
-```bash
 dotnet test NetWatch.Tests/
 ```
+
+## Tech
+
+Avalonia 12 · .NET 9 · CommunityToolkit.Mvvm · 38 xUnit tests
 
 ## License
 
